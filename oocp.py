@@ -15,21 +15,24 @@ scanList = [
     [ 1, 4,"Not"],
     [ 1, 5,"Delete"],
     [ 1, 6,"Up"],
+    [ 1, 13, "NoCare"],
     [ 1,10,"Left"],
     [ 1,11,"Insert"],
+    [ 2, 1,"End"],
     [ 2, 7,"Right"],
+    [ 2, 9,"Select"],
     [ 2,12,"0"],
     [ 2,14,"8",],
     [ 3, 7,"Text"],
     [ 3,12,"6"],
-    [ 4, 7,"Row",],
-    [ 4, 9,"Cont"],
+    [ 4, 7,"Run",],
+    [ 4, 9,"Cont"],	# CONT & LIST are same
     [ 4, 9,"List"],
     [ 4,12,"1"],
     [ 4,14,"9"],
     [ 5, 7,"Format"],
     [ 5,12,"4"],
-    [ 5,14,"C"],
+    [ 5,14,"C"],	    # error - C&E = same
     [ 5,14,"E",],
     [ 6, 7,"Mode"],
     [ 6,12,"5"],
@@ -43,7 +46,7 @@ scanList = [
     ]
 
 # current state of each key
-prev = [0]*len(scanList)
+prev = [1]*len(scanList)
 
 # symbolic names to board pin#s
 GPIO0=3     # sda
@@ -90,9 +93,9 @@ def sendKey(keyname, state):
     # send the osc message [keyname, state], where 1 is PRESSED 
     print "key = %s %s" % (keyname, state)
     if state:
-        val = 1
-    else:
         val = 0
+    else:
+        val = 1
     osc.send("/oocp", [keyname, val])
 
 def settle():
@@ -136,7 +139,7 @@ def test(keymap):
     else:
         cur = 1
     GPIO.setup(outPin, GPIO.IN)	# leave pins in INPUT mode to protect board
-    print "pin %s/%s = %s" % (keymap[0],inPin, cur)
+    # print "pin %s/%s = %s" % (keymap[0],inPin, cur)
     return cur
 
 MAX=10
