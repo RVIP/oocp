@@ -2,8 +2,8 @@
 
 
 import CCore
-# import RPi.GPIO as GPIO  
-import FakeRPiGPIO as GPIO
+import RPi.GPIO as GPIO  
+# import FakeRPiGPIO as GPIO
 import time  
 
 # outputs: 1
@@ -69,8 +69,10 @@ def test(keymap):
     inPin  = pinMap[keymap[1]]
     GPIO.setup(outPin, GPIO.OUT)
     GPIO.setup(inPin, GPIO.IN)
+    GPIO.output(outPin,1)
     cur = GPIO.input(inPin)
-    print "pin %s = %s" % (inPin, cur)
+    # print "pin %s = %s" % (inPin, cur)
+    GPIO.setup(outPin, GPIO.IN)	# leave pins in INPUT mode to protect board
     return cur
 
 def debounce(index, cur, k):
@@ -83,8 +85,17 @@ def scan(scanList):
     # itterate through the list 
     index = 0
     for k in scanList:
+        print k
         cur = test(k)
         debounce(index,cur,k)
         index += 1
 
 scan(scanList)
+
+def tmp():
+    while True:
+        scan([[3,5,"HEY"]])
+        time.sleep(0.05)
+
+
+
