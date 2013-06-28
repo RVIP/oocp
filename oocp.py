@@ -45,9 +45,40 @@ scanList = [
 # current state of each key
 prev = [0]*len(scanList)
 
-# map keyboard pins to GPIO pins {keyboard:GPIO, ...}
-pinMap = {1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 
-          9:9, 10:10, 11:11, 12:12, 13:13, 14:14, 15:15, 16:16, 17:17}
+# symbolic names to board pin#s
+GPIO0=3     # sda
+GPIO1=5     # scl
+GPIO4=7     # cpclk0
+GPIO14=8    # txd
+GPIO15=10   # rxd
+GPIO17=11
+GPIO18=12   # pcm_clk
+GPIO21=13
+GPIO22=15	# pcm_dout
+GPIO23=16
+GPIO24=18
+GPIO10=19   # mosi
+GPIO9=21    # miso
+GPIO25=22
+GPIO11=23   # sclk
+GPIO8=24    # ce0
+GPIO7=26    # ce1
+
+# mapped to pins 1-8 of oocp
+MOSI=GPIO10
+MISO=GPIO9
+SCLK=GPIO11
+CS0=GPIO8
+CS1=GPIO7
+SDA=GPIO0
+SCL=GPIO1
+TXD=GPIO14
+
+# mapped to pins 9-16 of oocp
+# GPIO17, GPIO18, GPIO21, GPIO22, GPIO23, GPIO24, GPIO25, GPIO4
+
+pinMap = {1:MOSI, 2:MISO, 3:SCLK, 4:CS0, 5:CS1, 6:SDA, 7:SCL, 8:TXD,
+          9:GPIO17, 10:GPIO18, 11:GPIO21, 12:GPIO22, 13:GPIO23, 14:GPIO24, 15:GPIO25, 16:GPIO4}
 
 # initialization 
 osc = CCore.CCore(pubsub="osc-udp:") # use default bidirectional multicast
