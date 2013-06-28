@@ -88,26 +88,68 @@ GPIO.setmode(GPIO.BOARD)
 
 def sendKey(keyname, state):
     # send the osc message [keyname, state], where 1 is PRESSED 
+    print "key = %s %s" % (keyname, state)
     if state:
         val = 1
     else:
         val = 0
     osc.send("/oocp", [keyname, val])
 
+def settle():
+    time.sleep(0.001)
+
+def waitFor1(pin, count):
+    while count:
+        if GPIO.input(pin):
+            return True
+        count -= 1
+    return False
+
+def stay0(pin, count):
+    while count:
+        if GPIO.input(pin):
+            return False
+        count -= 1
+    return True
+
 def test(keymap):
     # return the current state of a pin pair
+    # Note: Output pins set to 1, when read will FLOAT!
+    # There for, we use this cunning plan!
+    # We will set out output pin to 1, we will wait some number of
+    # cycles for a 1 to appear, if it doesn't we will record NO CHANGE
+    # for that button.
+    # We then set our output pin to 0 and wait for N consecutive reads
+    # of 0, if we get them, we'll call that PRESS, if we don't a RELEASE
+    # All this to avoid pull up resistors
     outPin = pinMap[keymap[0]]
     inPin  = pinMap[keymap[1]]
     GPIO.setup(outPin, GPIO.OUT)
-    GPIO.setup(inPin, GPIO.IN)
+    GPIO.setup(inPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.output(outPin,1)
-    cur = GPIO.input(inPin)
-    # print "pin %s = %s" % (inPin, cur)
+    if(not waitFor1(inPin, 50)):
+        return -1	# no confidence
+    GPIO.output(outPin,0)
+    settle()
+    if(stay0(inPin, 300)):
+        cur = 0
+    else:
+        cur = 1
     GPIO.setup(outPin, GPIO.IN)	# leave pins in INPUT mode to protect board
+    print "pin %s/%s = %s" % (keymap[0],inPin, cur)
     return cur
 
+MAX=10
+RELEASE=5
+PRESS=0
+
 def debounce(index, cur, k):
-    # place to insert debouncing, currently, result is instantaneous
+    # if 1 add to prev (up to MAX)
+    # if now at RELEASE, trigger RELEASE, set prev to MAX
+    # if previous not 0, and cur = 0, subtract 1, if now 0 - trigger PRESS
+    # if(cur && prev[index]<MAX):
+    #     prev[index]+= 1
+    # raw:
     if(prev[index]!=cur):
         prev[index]=cur
         sendKey(k[2], cur)
@@ -116,17 +158,25 @@ def scan(scanList):
     # itterate through the list 
     index = 0
     for k in scanList:
-        print k
+        # print k
         cur = test(k)
-        debounce(index,cur,k)
+        if cur >= 0:	# -1 for no confidence
+            debounce(index,cur,k)
         index += 1
 
 scan(scanList)
 
 def tmp():
     while True:
-        scan([[3,5,"HEY"]])
+        scan([[1,9,"HEY"]])
         time.sleep(0.05)
 
+def loop(sl):
+    while True:
+        scan(sl)
+        print "."
 
 
+
+
+    
