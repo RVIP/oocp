@@ -167,8 +167,6 @@ def scan(scanList):
             debounce(index,cur,k)
         index += 1
 
-scan(scanList)
-
 def tmp():
     while True:
         scan([[1,9,"HEY"]])
@@ -180,6 +178,7 @@ def loop(sl):
         print "."
 
 
+loop(scanList)
 
 
     
