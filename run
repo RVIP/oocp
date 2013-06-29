@@ -1,0 +1,6 @@
+#!/bin/bash
+sudo /bin/bash << EOF
+cd /home/pi/git/oocp
+source env/bin/activate
+python ./oocp.py
+EOF
