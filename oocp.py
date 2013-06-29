@@ -1,6 +1,5 @@
 # Scan the OOCP Keyboard and send OSC events
 
-
 import CCore
 import RPi.GPIO as GPIO  
 # import FakeRPiGPIO as GPIO
@@ -9,15 +8,14 @@ import time
 # outputs: 1
 # inputs 
 scanList = [
-#    [ 1, 1,"A"],
-#    [ 1, 1,"D"],
+    [ 1, 13, "NoCare"],
     [ 1, 3,"Down"],
     [ 1, 4,"Not"],
     [ 1, 5,"Delete"],
     [ 1, 6,"Up"],
-    [ 1, 13, "NoCare"],
     [ 1,10,"Left"],
     [ 1,11,"Insert"],
+    [ 13, 14,"A"],
     [ 2, 1,"End"],
     [ 2, 7,"Right"],
     [ 2, 9,"Select"],
@@ -25,17 +23,18 @@ scanList = [
     [ 2,14,"8",],
     [ 3, 7,"Text"],
     [ 3,12,"6"],
+    [ 3,14,"E",],
     [ 4, 7,"Run",],
-    [ 4, 9,"Cont"],	# CONT & LIST are same
-    [ 4, 9,"List"],
+    [ 4, 9,"Cont"],
     [ 4,12,"1"],
     [ 4,14,"9"],
     [ 5, 7,"Format"],
     [ 5,12,"4"],
-    [ 5,14,"C"],	    # error - C&E = same
-    [ 5,14,"E",],
+    [ 5,14,"C"],
+    [ 6, 14,"D"],
     [ 6, 7,"Mode"],
     [ 6,12,"5"],
+    [ 7,10,"List"],
     [ 7,11,"Blank"],
     [ 7,13,"Stop"],
     [10,12,"7"],
@@ -86,7 +85,7 @@ pinMap = {1:MOSI, 2:MISO, 3:SCLK, 4:CS0, 5:CS1, 6:SDA, 7:SCL, 8:TXD,
 # initialization 
 osc = CCore.CCore(pubsub="osc-udp:") # use default bidirectional multicast
 
-# to use Raspberry Pi board pin numbers  
+# use Raspberry Pi board pin numbers  
 GPIO.setmode(GPIO.BOARD)  
 
 def sendKey(keyname, state):
@@ -175,7 +174,7 @@ def tmp():
 def loop(sl):
     while True:
         scan(sl)
-        print "."
+        # print "."
 
 
 loop(scanList)
